@@ -1,2 +1,2 @@
 # hse-portal
-https://kotkota.github.io/hse-portal/
+https://github.com/kotkota/hse-portal/wiki
