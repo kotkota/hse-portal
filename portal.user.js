@@ -43,6 +43,10 @@
     .__widget_wrapper textarea {
       height: max-content !important;
     }
+    .__widget_builder_source_outer {
+      position: sticky;
+      top: 0;
+    }
   `;
 
   GM_addStyle(css);
