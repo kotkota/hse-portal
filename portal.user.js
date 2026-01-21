@@ -35,11 +35,13 @@
         adjustTextareaRows(textarea);
         textarea.addEventListener('input', () => adjustTextareaRows(textarea));
     });
+
+    const builderBlocks = document.querySelector('.__widget_builder_source_outer');
+    builderBlocks.prepend( document.querySelector('.__widget_builder_fold') );
+    builderBlocks.prepend( document.querySelector('.__widget_builder_maximize') );
+    
   }, 3000);
 
-  const builderBlocks = document.querySelector('.__widget_builder_source_outer');
-  builderBlocks.prepend( document.querySelector('.__widget_builder_fold') );
-  builderBlocks.prepend( document.querySelector('.__widget_builder_maximize') );
 
   const css = `
     .container > div > .__widget_wrapper > .__widget_builder_destination,
