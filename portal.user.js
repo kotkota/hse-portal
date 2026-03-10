@@ -37,8 +37,10 @@
     });
 
     const builderBlocks = document.querySelector('.__widget_builder_source_outer');
-    builderBlocks.prepend( document.querySelector('.__widget_builder_fold') );
-    builderBlocks.prepend( document.querySelector('.__widget_builder_maximize') );
+    if (builderBlocks) {
+      builderBlocks.prepend( document.querySelector('.__widget_builder_fold') );
+      builderBlocks.prepend( document.querySelector('.__widget_builder_maximize') );
+    }
     
   }, 3000);
 
