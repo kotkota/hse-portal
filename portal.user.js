@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.22
+// @version     1.23
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -47,7 +47,7 @@
     .container > div > .__widget_wrapper > .__widget_builder_destination,
     .__widget_builder_destination.__widget_builder_preview,
     .__widget_wrapper textarea {
-      height: max-content !important;
+      min-height: max-content !important;
     }
     .__widget_builder_source_outer {
       position: sticky;
