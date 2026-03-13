@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.23
+// @version     1.24
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -28,7 +28,7 @@
     }
   setTimeout(() => {
 
-    const textAreas = document.querySelectorAll('textarea.fullWidth');
+    const textAreas = document.querySelectorAll('textarea.fullWidth, textarea.form-control');
 
     textAreas.forEach(textarea => {
 
@@ -41,7 +41,7 @@
       builderBlocks.prepend( document.querySelector('.__widget_builder_fold') );
       builderBlocks.prepend( document.querySelector('.__widget_builder_maximize') );
     }
-    
+
   }, 3000);
 
 
@@ -55,6 +55,7 @@
       position: sticky;
       top: 0;
     }
+    .__widget_builder_source_outer + .__widget_builder_destination {height: 100svh;}
   `;
 
   GM_addStyle(css);
