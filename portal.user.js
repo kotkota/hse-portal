@@ -112,6 +112,7 @@
       gap: 0.5em;
       padding: 0 5px 5px;
     }
+    .__widget_clone_add_button {margin-top: 15px;}
   `;
 
   GM_addStyle(css);
