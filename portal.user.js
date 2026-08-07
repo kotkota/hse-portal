@@ -74,13 +74,17 @@
       font-family: 'HSE Sans', 'Helvetica Neue', tahoma, sans-serif;
       font-size: 14px;
     }
-    .monospaced {font-family: monospace;}
+    .monospaced {
+      font-family: monospace;
+      textarea {border: unset;}
+    }
     div {font-size: revert;}
+    .panel-body {padding: 10px;}
     .__widget_wrapper textarea {field-sizing: content;}
     label, b, strong {font-weight: 600 !important;}
     .panel-heading {
       font-size: 16px;
-      padding: .5em .75em;
+      padding: 10px !important;
     }
     .cke_editable {font-size: 16px;}
 
@@ -112,7 +116,9 @@
       gap: 0.5em;
       padding: 0 5px 5px;
     }
-    .__widget_clone_add_button {margin-top: 15px;}
+    .__widget_clone_wrapper {position: relative;}
+    .__widget_clone_title:empty {display: none;}
+    input.__widget_clone_add_button {margin-top: 15px;}
     div.v_menu_level1 {
       margin: 8px 2px 2px 4px;
       font-weight: 600;
@@ -124,6 +130,12 @@
     }
     .v_menu_bulleted_item {display: contents;}
     div.vmenu_table2 div.v_menu_line, div.vmenu_table2 div.v_menu_current {padding-left: 15px;}
+    .__widget_builder_item {padding: unset !important;}
+    .__widget_builder_options {
+      border: unset;
+      padding-inline: 2px;
+    }
+    div[style="padding-top: 5px;"] {padding-right: 5px;}
   `;
 
   GM_addStyle(css);
