@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.32
+// @version     1.33
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -82,9 +82,9 @@
     div.panel-body {padding: 10px;}
     .__widget_wrapper textarea {field-sizing: content;}
     label, b, strong {font-weight: 600 !important;}
-    .panel-heading {
+    div.panel-heading {
       font-size: 16px;
-      padding: 10px !important;
+      padding: 10px;
     }
     .cke_editable {font-size: 16px;}
 
