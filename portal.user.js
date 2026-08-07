@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.31
+// @version     1.32
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -79,7 +79,7 @@
       textarea {border: unset;}
     }
     div {font-size: revert;}
-    .panel-body {padding: 10px;}
+    div.panel-body {padding: 10px;}
     .__widget_wrapper textarea {field-sizing: content;}
     label, b, strong {font-weight: 600 !important;}
     .panel-heading {
@@ -118,7 +118,7 @@
     }
     .__widget_clone_wrapper {position: relative;}
     .__widget_clone_title:empty {display: none;}
-    input.__widget_clone_add_button {margin-top: 15px;}
+    input.__widget_clone_add_button {margin-top: 10px;}
     .__widget_clone_remove_button {
       position: absolute;
       top: 0;
