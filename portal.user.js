@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.24
+// @version     1.25
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -16,41 +16,15 @@
 (function() {
   'use strict';
 
-    function adjustTextareaRows(textareaElement) {
-
-        const textValue = textareaElement.value;
-        const numberOfNewlines = (textValue.match(/\n/g) || ['']).length;
-
-        if (numberOfNewlines > 10) {
-          textareaElement.setAttribute('rows', numberOfNewlines);
-        }
-
-    }
-  setTimeout(() => {
-
-    const textAreas = document.querySelectorAll('textarea.fullWidth, textarea.form-control');
-
-    textAreas.forEach(textarea => {
-
-        adjustTextareaRows(textarea);
-        textarea.addEventListener('input', () => adjustTextareaRows(textarea));
-    });
-
-    const builderBlocks = document.querySelector('.__widget_builder_source_outer');
-    if (builderBlocks) {
-      builderBlocks.prepend( document.querySelector('.__widget_builder_fold') );
-      builderBlocks.prepend( document.querySelector('.__widget_builder_maximize') );
-    }
-
-  }, 3000);
-
-
   const css = `
-    .container > div > .__widget_wrapper > .__widget_builder_destination,
-    .__widget_builder_destination.__widget_builder_preview,
     .__widget_wrapper textarea {
-      min-height: max-content !important;
+      field-sizing: content;;
     }
+    .__widget_builder_destination.__widget_builder_preview.__widget_builder_destination_only {
+      height: revert;
+      min-height: 40px;
+    }
+      
     .__widget_builder_source_outer {
       position: sticky;
       top: 0;
