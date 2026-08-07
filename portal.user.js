@@ -135,8 +135,8 @@
     }
     .v_menu_bulleted_item {display: contents;}
     div.vmenu_table2 div.v_menu_line, div.vmenu_table2 div.v_menu_current {padding-left: 15px;}
-    .__widget_builder_item {padding: unset !important;}
-    .__widget_builder_options {
+    div.__widget_builder_item {padding: unset;}
+    div.__widget_builder_options {
       border: unset;
       padding-inline: 2px;
     }
