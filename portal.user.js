@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.38
+// @version     1.39
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -105,7 +105,7 @@
     }
     .__widget_builder_source.ui-sortable {
       box-sizing: border-box;
-      height: 100svh !important;
+      height: 90svh !important;
     }
     .__widget_builder_destination.__widget_builder_preview.__widget_builder_destination_only {
       height: revert !important;
@@ -116,7 +116,7 @@
       position: sticky;
       top: 0;
     }
-    .__widget_builder_source_outer + .__widget_builder_destination {height: 100svh;}
+    .__widget_builder_source_outer + .__widget_builder_destination {height: 90svh;}
     .__widget_wrapper:has(> .__widget_inline_block > select) {
       display: flex;
       align-items: baseline;
@@ -125,6 +125,7 @@
     }
     .__widget_clone_wrapper {position: relative;}
     .__widget_clone_title:empty {display: none;}
+    input[type="text"] {padding-inline: 0.3em;}
     input.__widget_clone_add_button {margin-top: 10px;}
     .__widget_clone_remove_button {
       position: absolute;
