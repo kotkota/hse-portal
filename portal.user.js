@@ -180,9 +180,9 @@
     div.__widget_space_top {padding-top: 5px;}
     .container > h3 + br {display: none;}
     h3 + br + div {margin: unset !important;}
-    .container {padding: unset;}
+    div.container {padding: unset;}
     @media (min-width:1200px) {
-      .container {width: min(100%, 1560px);}
+      div.container {width: min(100%, 1560px);}
     }
   `;
 
