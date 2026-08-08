@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.43
+// @version     1.44
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -182,7 +182,7 @@
     h3 + br + div {margin: unset !important;}
     div.container {padding: unset;}
     @media (min-width:1200px) {
-      div.container {width: min(100%, 1560px);}
+      div.container {width: min(100% - 20px, 1560px);}
     }
   `;
 
