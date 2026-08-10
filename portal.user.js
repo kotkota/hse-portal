@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.47
+// @version     1.48
 // @author      kotkota
 // @description Делает админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -83,9 +83,9 @@
       font-family: 'HSE Sans', 'Helvetica Neue', tahoma, sans-serif;
       font-size: 14px;
     }
-    .monospaced {
+    .monospaced textarea {
       font-family: monospace;
-      textarea {border: unset;}
+      border: unset;
     }
     div {font-size: revert;}
     div.panel {margin-bottom: 5px;}
