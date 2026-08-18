@@ -3,9 +3,9 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.49
+// @version     1.50
 // @author      kotkota
-// @description Делает админку портала Вышки более дружелюбной.
+// @description Делаем админку портала Вышки более дружелюбной.
 // @run-at      document-idle
 // @homepageURL    https://github.com/kotkota/hse-portal
 // @updateURL      https://raw.githubusercontent.com/kotkota/hse-portal/master/portal.user.js
@@ -193,6 +193,12 @@
     div.container {padding: unset;}
     @media (min-width:1200px) {
       div.container {width: min(100% - 20px, 1560px);}
+    }
+    .ou-template-menu.ou-template-uc {
+	    background: repeating-linear-gradient(120deg, #ffc469, #ffb300 20px, #6c757d 20px, #6c757d 40px) !important;
+    }
+    .container[style*="jpg"] {
+    	background: repeating-linear-gradient(120deg, #fffacf, #fffacf 80px, #edeff0 80px, #e2e9ee 160px) !important;
     }
   `;
 
