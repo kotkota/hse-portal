@@ -195,7 +195,7 @@
       div.container {width: min(100% - 20px, 1560px);}
     }
 	.page-header {
-		margin: unset;
+		margin: unset !important;
 		
 		div[style*="250px"] {width: auto !important;}
 	}
