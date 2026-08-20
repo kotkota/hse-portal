@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.hse.ru/adm/*
 // @grant       GM_addStyle
-// @version     1.52
+// @version     1.53
 // @author      kotkota
 // @description Делаем админку портала Вышки более дружелюбной.
 // @run-at      document-idle
@@ -204,7 +204,7 @@
 	    background: repeating-linear-gradient(120deg, #ffc469, #ffb300 20px, #6c757d 20px, #6c757d 40px) !important;
     }
     .container[style*="jpg"] {
-    	background: repeating-linear-gradient(120deg, #fffacf, #fffacf 80px, #edeff0 80px, #e2e9ee 160px) !important;
+    	background: repeating-linear-gradient(120deg, #ffeccf, #ffeccf 80px, #dddfe1 80px, #dddfe1 160px) !important;
 		padding: 20px;
 		margin-left: 7px !important;
     }
