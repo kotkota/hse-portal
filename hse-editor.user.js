@@ -10,6 +10,9 @@
 // @connect      hse.ru
 // @connect      *.hse.ru
 // @run-at       document-idle
+// @homepageURL    https://github.com/kotkota/hse-portal
+// @updateURL      https://raw.githubusercontent.com/kotkota/hse-portal/master/hse-editor.user.js
+// @downloadURL    https://raw.githubusercontent.com/kotkota/hse-portal/master/hse-editor.user.js
 // ==/UserScript==
 
 (() => {
