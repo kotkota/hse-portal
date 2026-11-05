@@ -1,0 +1,375 @@
+/**
+ * HSE Design System v1.5.0 - Official Design Tokens & Typography
+ * Национальный исследовательский университет «Высшая школа экономики»
+ *
+ * Точные значения из официального пакета @hse-design/tokens и документации:
+ * https://design-system.hse.ru/v1.5.0/src-tokens-typography
+ */
+
+:root {
+  /* ==========================================================================
+     1. Фирменные цвета (Brand Colors)
+     ========================================================================== */
+  --hse-color-brand-dark: #002D6E;        /* Основной темно-синий */
+  --hse-color-brand-twilight: #0044B0;    /* Сумеречный синий */
+  --hse-color-brand: #0050CF;             /* Доминантный синий дизайн-системы (brand-1) */
+  --hse-color-brand-1: #0050CF;           /* Базовый интерактивный */
+  --hse-color-brand-2: #3A74D0;           /* Синий 2-го уровня */
+  --hse-color-brand-3: #8EB2EC;           /* Синий 3-го уровня */
+  --hse-color-brand-4: #C2DAFF;           /* Светло-синий 4-го уровня */
+  --hse-color-brand-5: #F0F5FF;           /* Пастельная синяя подложка */
+
+  /* Полиграфический темный синий из брендбука (Pantone 287 C / CMYK 100 80 0 10) */
+  --hse-color-brand-print-navy: #102D69;
+
+  /* Удобные алиасы первого порядка для верстки */
+  --hse-color-primary: var(--hse-color-brand);
+  --hse-color-primary-dark: var(--hse-color-brand-dark);
+  --hse-color-primary-light: var(--hse-color-brand-2);
+  --hse-color-primary-subtle: var(--hse-color-brand-5);
+
+  /* ==========================================================================
+     2. Базовые цвета и поверхности (Base & Background Colors)
+     ========================================================================== */
+  --hse-color-base-black: #0F0F14;        /* Фирменный черный текст */
+  --hse-color-base-white: #FFFFFF;        /* Белый */
+
+  --hse-color-bg: #FFFFFF;
+  --hse-color-background-white: #FFFFFF;
+  --hse-color-background-gray-1: #EDEFF3; /* Фоновый серый 1 */
+  --hse-color-background-gray-2: #F8F9FB; /* Фоновый серый 2 (карточки, плашки) */
+
+  /* ==========================================================================
+     3. Серая палитра (Gray Dusk & Gray Morn)
+     ========================================================================== */
+  --hse-color-gray-dusk: #6B7A99;          /* Вторичный текст */
+  --hse-color-gray-dusk-1: #6B7A99;
+  --hse-color-gray-dusk-2: #7C89A3;
+  --hse-color-gray-dusk-3: #A2A9B8;
+  --hse-color-gray-dusk-4: #C0C6D1;
+  --hse-color-gray-dusk-5: #F0F2F5;
+
+  --hse-color-gray-morn: #D3D8E6;
+  --hse-color-gray-morn-1: #D3D8E6;        /* Границы hover */
+  --hse-color-gray-morn-2: #E1E4EB;        /* Границы карточек по умолчанию */
+  --hse-color-gray-morn-3: #EDEFF3;        /* Разделители */
+  --hse-color-gray-morn-4: #F5F6FA;
+
+  /* Текстовые алиасы */
+  --hse-color-text-primary: var(--hse-color-base-black);
+  --hse-color-text-secondary: var(--hse-color-gray-dusk);
+  --hse-color-text-muted: var(--hse-color-gray-dusk-2);
+  --hse-color-text-inverse: var(--hse-color-base-white);
+  --hse-color-border: var(--hse-color-gray-morn-2);
+  --hse-color-border-hover: var(--hse-color-gray-morn-1);
+
+  /* ==========================================================================
+     4. Системные цвета (System Status Colors)
+     ========================================================================== */
+  --hse-color-system-success: #28C75D;
+  --hse-color-system-success-dark: #228B45;
+  --hse-color-system-success-deepdark: #096237;
+  --hse-color-system-success-light: #E9F9EF;
+
+  --hse-color-system-error: #FF564E;
+  --hse-color-system-error-dark: #D82E2E;
+  --hse-color-system-error-deepdark: #B9212E;
+  --hse-color-system-error-light: #FFEEED;
+
+  --hse-color-system-warning: #F8B73F;
+  --hse-color-system-warning-dark: #E9A21D;
+  --hse-color-system-warning-deepdark: #8F5714;
+  --hse-color-system-warning-light: #FEF8EC;
+
+  /* ==========================================================================
+     5. Акцентные цвета дизайн-системы (Accent Colors)
+     ========================================================================== */
+  --hse-color-accent-dodger: #27A3FF;
+  --hse-color-accent-dodger-dark: #008EF6;
+  --hse-color-accent-dodger-deepdark: #0065B0;
+  --hse-color-accent-dodger-2: #6CB4F5;
+  --hse-color-accent-dodger-3: #90C3F0;
+  --hse-color-accent-dodger-4: #C3DDF4;
+  --hse-color-accent-dodger-5: #EBF3FA;
+
+  --hse-color-accent-slateblue: #6E73F7;
+  --hse-color-accent-slateblue-dark: #6650EC;
+  --hse-color-accent-slateblue-deepdark: #581ADD;
+  --hse-color-accent-slateblue-2: #9497FF;
+  --hse-color-accent-slateblue-3: #B2B6FF;
+  --hse-color-accent-slateblue-4: #CCCEFF;
+  --hse-color-accent-slateblue-5: #F0F0FA;
+
+  --hse-color-accent-purple: #935CE5;
+  --hse-color-accent-purple-dark: #6929C4;
+  --hse-color-accent-purple-deepdark: #3B0B80;
+  --hse-color-accent-purple-2: #A37FF5;
+  --hse-color-accent-purple-3: #C2A9F9;
+  --hse-color-accent-purple-4: #D8C9FB;
+  --hse-color-accent-purple-5: #F3F0FA;
+
+  --hse-color-accent-red: #F0522B;
+  --hse-color-accent-red-dark: #E03A15;
+  --hse-color-accent-red-deepdark: #A42F15;
+  --hse-color-accent-red-2: #FF6C47;
+  --hse-color-accent-red-3: #FF8D70;
+  --hse-color-accent-red-4: #FFBEAD;
+  --hse-color-accent-red-5: #FFEEEA;
+
+  --hse-color-accent-orange: #FA8500;
+  --hse-color-accent-orange-dark: #EB6D00;
+  --hse-color-accent-orange-deepdark: #964002;
+  --hse-color-accent-orange-2: #FF941A;
+  --hse-color-accent-orange-3: #FFB366;
+  --hse-color-accent-orange-4: #FFCC99;
+  --hse-color-accent-orange-5: #FFF3E6;
+
+  --hse-color-accent-green: #00B86E;
+  --hse-color-accent-green-dark: #00A35F;
+  --hse-color-accent-green-deepdark: #0E603D;
+  --hse-color-accent-green-2: #49B88B;
+  --hse-color-accent-green-3: #86D1B3;
+  --hse-color-accent-green-4: #AFE1CD;
+  --hse-color-accent-green-5: #EBF5F1;
+
+  /* ==========================================================================
+     6. Шрифтовые семейства и параметры (Typography Tokens)
+     ========================================================================== */
+  --hse-font-family-hse-sans: 'HSE Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --hse-font-family-hse-slab: 'HSE Slab', Georgia, 'Times New Roman', serif;
+  --hse-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Алиасы */
+  --hse-font-family-sans: var(--hse-font-family-hse-sans);
+  --hse-font-family-slab: var(--hse-font-family-hse-slab);
+  --hse-font-family-heading: var(--hse-font-family-hse-sans);
+
+  /* Шкала размеров шрифтов дизайн-системы */
+  --hse-font-size-56: 56px;
+  --hse-font-size-42: 42px;
+  --hse-font-size-32: 32px;
+  --hse-font-size-24: 24px;
+  --hse-font-size-20: 20px;
+  --hse-font-size-18: 18px;               /* Оптимальный размер наборного текста */
+  --hse-font-size-16: 16px;               /* Мелкий текст (для крайних случаев) */
+  --hse-font-size-14: 14px;
+  --hse-font-size-12: 12px;
+  --hse-font-size-9: 9px;
+
+  /* Интерлиньяж дизайн-системы */
+  --hse-line-height-64: 64px;
+  --hse-line-height-56: 56px;
+  --hse-line-height-40: 40px;
+  --hse-line-height-32: 32px;
+  --hse-line-height-28: 28px;
+  --hse-line-height-24: 24px;
+  --hse-line-height-20: 20px;
+  --hse-line-height-16: 16px;
+  --hse-line-height-12: 12px;
+  --hse-line-height-9: 9px;
+
+  /* Насыщенность */
+  --hse-font-weight-normal: 400;
+  --hse-font-weight-semibold: 600;
+
+  /* ==========================================================================
+     7. Радиусы скругления (Radius)
+     ========================================================================== */
+  --hse-radius-none: 0;
+  --hse-radius-small: 4px;
+  --hse-radius-medium: 8px;
+  --hse-radius-large: 12px;
+  --hse-radius-full: 9999px;
+
+  /* ==========================================================================
+     8. Тени (Shadows)
+     ========================================================================== */
+  --hse-shadow-default: 0 1px 2px rgba(106, 122, 152, 0.15);
+  --hse-shadow-dropdown: 0 1px 12px rgba(106, 122, 152, 0.12);
+  --hse-shadow-hover: 0 4px 24px rgba(106, 122, 152, 0.15);
+
+  /* ==========================================================================
+     9. Отступы (Spacing)
+     ========================================================================== */
+  --hse-spacing-small-3x: 8px;
+  --hse-spacing-small-2x: 12px;
+  --hse-spacing-small-x: 16px;
+  --hse-spacing-small: 24px;
+  --hse-spacing-medium: 32px;
+  --hse-spacing-medium-x: 40px;
+  --hse-spacing-large: 48px;
+  --hse-spacing-large-x: 64px;
+  --hse-spacing-large-2x: 72px;
+  --hse-spacing-large-3x: 96px;
+  --hse-spacing-large-4x: 124px;
+
+  /* ==========================================================================
+     10. Брейкпоинты и Сетка (Breakpoints & Grid)
+     ========================================================================== */
+  --hse-breakpoint-mobile-small: 320px;
+  --hse-breakpoint-mobile-large: 375px;
+  --hse-breakpoint-tablet-small: 768px;
+  --hse-breakpoint-tablet-large: 1024px;
+  --hse-breakpoint-desktop-small: 1280px;
+  --hse-breakpoint-desktop-medium: 1440px;
+  --hse-breakpoint-desktop-large: 1920px;
+
+  --hse-container-max: 1280px;
+  --hse-container-padding-mobile: 16px;
+  --hse-container-padding-tablet: 40px;
+  --hse-container-padding-desktop: 76px;
+
+  --hse-transition-quick: 0.2s ease-in-out;
+}
+
+/* ==========================================================================
+   11. Официальные типографические классы (HSE Design System Typography Classes)
+   Соответствуют спецификации https://design-system.hse.ru/v1.5.0/src-tokens-typography
+   ========================================================================== */
+
+/* Заголовки (H1–H4): шрифт HSE Sans SemiBold, weight 600 */
+.hse-Text_heading_h1 {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-56);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-64);
+}
+
+.hse-Text_heading_h2 {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-42);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-56);
+}
+
+.hse-Text_heading_h3 {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-32);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-40);
+}
+
+.hse-Text_heading_h4 {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-24);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-32);
+}
+
+/* Лиды в промо-материалах: акцидентный шрифт HSE Slab, weight 400 */
+.hse-Text_lead_large {
+  font-family: var(--hse-font-family-slab);
+  font-size: var(--hse-font-size-32);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-40);
+}
+
+.hse-Text_lead_small {
+  font-family: var(--hse-font-family-slab);
+  font-size: var(--hse-font-size-24);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-32);
+}
+
+/* Стандартные абзацы текста (Paragraph): шрифт HSE Sans, weight 400 */
+/* text_paragraph_large — оптимальный основной размер текста в дизайн-системе (18px) */
+.hse-Text_paragraph_large {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-18);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-24);
+}
+
+/* text_paragraph_small — более мелкий текст (16px), используется в крайних случаях */
+.hse-Text_paragraph_small {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-16);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-24);
+}
+
+/* Подписи (Captions) */
+.hse-Text_caption_x_large_regular {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-20);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-28);
+}
+
+.hse-Text_caption_x_large_bold {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-20);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-28);
+}
+
+.hse-Text_caption_large_regular {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-18);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-24);
+}
+
+.hse-Text_caption_large_bold {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-18);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-24);
+}
+
+.hse-Text_caption_medium_regular {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-16);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-20);
+}
+
+.hse-Text_caption_medium_bold {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-16);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-20);
+}
+
+.hse-Text_caption_small_regular {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-14);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-20);
+}
+
+.hse-Text_caption_small_bold {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-14);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-20);
+}
+
+.hse-Text_caption_x_small_regular {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-12);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-16);
+}
+
+.hse-Text_caption_x_small_bold {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-12);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-16);
+}
+
+/* Пометки (Labels) */
+.hse-Text_label_x_small_regular {
+  font-family: var(--hse-font-family-sans);
+  font-size: var(--hse-font-size-12);
+  font-weight: var(--hse-font-weight-normal);
+  line-height: var(--hse-line-height-12);
+}
+
+.hse-Text_label_x_small_bold {
+  font-family: var(--hse-font-family-heading);
+  font-size: var(--hse-font-size-12);
+  font-weight: var(--hse-font-weight-semibold);
+  line-height: var(--hse-line-height-12);
+}
