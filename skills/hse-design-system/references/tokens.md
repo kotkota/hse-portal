@@ -2,21 +2,22 @@
 
 Официальный источник: пакет `@hse-design/tokens` (v1.5.0, `package/src/`) и документация [design-system.hse.ru/v1.5.0/src-tokens-typography](https://design-system.hse.ru/v1.5.0/src-tokens-typography).
 Все токены и классы оформлены в [`assets/styles/hse-tokens.css`](../assets/styles/hse-tokens.css).
+Скилл настроен на использование шрифтов с серверов **hse.ru** (`/f/src/global/fonts/`). Если ваши страницы размещены **не** на сервере с этими путями, отредактируйте `assets/styles/fonts.css` и укажите полный URL к CDN, локальные пути или системные фолбэки.
 
 ---
 
 ## 1. Базовая типографика (HSE Typography)
 
 ### 1.1. Главные принципы типографики Вышки:
-1. **Оптимальный размер наборного текста — 18px** (`text_paragraph_large` / `.hse-Text_paragraph-large`, интерлиньяж 24px).
-   *Размер 16px (`text_paragraph_small`) считается мелким и используется только в крайних случаях.*
+1. **Оптимальный размер наборного текста — 18px** (`.hse-Text_paragraph_large`, интерлиньяж 24px).
+   *Размер 16px (`.hse-Text_paragraph_small`) считается мелким и используется только в крайних случаях.*
 2. **Шрифтовые пары**:
    - **Заголовки и жирные акценты (600)**:  `HSE Sans`.
    - **Основной наборный текст (400)**: `HSE Sans` (интерфейсный гротеск).
    - **Лиды в промо-материалах (400)**: `HSE Slab` (брусковый шрифт). Не рекомендуется использовать в интерфейсах личных кабинетов.
 3. **Длина строки**: для оптимальной читабельности длина строки должна составлять **от 40 до 80 символов**, включая пробелы (`max-width: 70ch`).
 4. **Контраст заголовков и текста**:
-   - В промо-материалах и на лендингах: выраженный высокий контраст (например, `text_heading_h1` 56px или `text_heading_h2` 42px в паре с `text_lead_large` 32px или `text_paragraph_large` 18px).
+   - В промо-материалах и на лендингах: выраженный высокий контраст (например, `.hse-Text_heading_h1` 56px или `.hse-Text_heading_h2` 42px в паре с `.hse-Text_lead_large` 32px или `.hse-Text_paragraph_large` 18px).
    - В сервисных интерфейсах: контраст снижается, чтобы не перегружать внимание.
 
 ---
@@ -25,26 +26,26 @@
 
 | Класс в HTML | Назначение | Шрифт | Размер (px) | Вес | Интерлиньяж |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `.hse-Text_heading-h1` | Заголовок 1-го уровня | `HSE Sans` | 56px | 600 | 64px |
-| `.hse-Text_heading-h2` | Заголовок 2-го уровня | `HSE Sans` | 42px | 600 | 56px |
-| `.hse-Text_heading-h3` | Заголовок 3-го уровня | `HSE Sans` | 32px | 600 | 40px |
-| `.hse-Text_heading-h4` | Заголовок 4-го уровня | `HSE Sans` | 24px | 600 | 32px |
-| `.hse-Text_lead-large` | Промо-лид большой | `HSE Slab` | 32px | 400 | 40px |
-| `.hse-Text_lead-small` | Промо-лид малый | `HSE Slab` | 24px | 400 | 32px |
-| **`.hse-Text_paragraph-large`** | **Основной абзац (дефолт)** | **`HSE Sans`** | **18px** | **400** | **24px** |
-| `.hse-Text_paragraph-small` | Абзац малый (вторичный) | `HSE Sans` | 16px | 400 | 24px |
-| `.hse-Text_caption-x-large-regular` | Подпись XL обычная | `HSE Sans` | 20px | 400 | 28px |
-| `.hse-Text_caption-x-large-bold` | Подпись XL жирная | `HSE Sans` | 20px | 600 | 28px |
-| `.hse-Text_caption-large-regular` | Подпись L обычная | `HSE Sans` | 18px | 400 | 24px |
-| `.hse-Text_caption-large-bold` | Подпись L жирная | `HSE Sans` | 18px | 600 | 24px |
-| `.hse-Text_caption-medium-regular` | Подпись M обычная | `HSE Sans` | 16px | 400 | 20px |
-| `.hse-Text_caption-medium-bold` | Подпись M жирная | `HSE Sans` | 16px | 600 | 20px |
-| `.hse-Text_caption-small-regular` | Подпись S обычная | `HSE Sans` | 14px | 400 | 20px |
-| `.hse-Text_caption-small-bold` | Подпись S жирная | `HSE Sans` | 14px | 600 | 20px |
-| `.hse-Text_caption-x-small-regular` | Подпись XS обычная | `HSE Sans` | 12px | 400 | 16px |
-| `.hse-Text_caption-x-small-bold` | Подпись XS жирная | `HSE Sans` | 12px | 600 | 16px |
-| `.hse-Text_label-x-small-regular` | Пометка XS | `HSE Sans` | 12px | 400 | 12px |
-| `.hse-Text_label-x-small-bold` | Пометка XS жирная | `HSE Sans` | 12px | 600 | 12px |
+| `.hse-Text_heading_h1` | Заголовок 1-го уровня | `HSE Sans` | 56px | 600 | 64px |
+| `.hse-Text_heading_h2` | Заголовок 2-го уровня | `HSE Sans` | 42px | 600 | 56px |
+| `.hse-Text_heading_h3` | Заголовок 3-го уровня | `HSE Sans` | 32px | 600 | 40px |
+| `.hse-Text_heading_h4` | Заголовок 4-го уровня | `HSE Sans` | 24px | 600 | 32px |
+| `.hse-Text_lead_large` | Промо-лид большой | `HSE Slab` | 32px | 400 | 40px |
+| `.hse-Text_lead_small` | Промо-лид малый | `HSE Slab` | 24px | 400 | 32px |
+| **`.hse-Text_paragraph_large`** | **Основной абзац (дефолт)** | **`HSE Sans`** | **18px** | **400** | **24px** |
+| `.hse-Text_paragraph_small` | Абзац малый (вторичный) | `HSE Sans` | 16px | 400 | 24px |
+| `.hse-Text_caption_x_large_regular` | Подпись XL обычная | `HSE Sans` | 20px | 400 | 28px |
+| `.hse-Text_caption_x_large_bold` | Подпись XL жирная | `HSE Sans` | 20px | 600 | 28px |
+| `.hse-Text_caption_large_regular` | Подпись L обычная | `HSE Sans` | 18px | 400 | 24px |
+| `.hse-Text_caption_large_bold` | Подпись L жирная | `HSE Sans` | 18px | 600 | 24px |
+| `.hse-Text_caption_medium_regular` | Подпись M обычная | `HSE Sans` | 16px | 400 | 20px |
+| `.hse-Text_caption_medium_bold` | Подпись M жирная | `HSE Sans` | 16px | 600 | 20px |
+| `.hse-Text_caption_small_regular` | Подпись S обычная | `HSE Sans` | 14px | 400 | 20px |
+| `.hse-Text_caption_small_bold` | Подпись S жирная | `HSE Sans` | 14px | 600 | 20px |
+| `.hse-Text_caption_x_small_regular` | Подпись XS обычная | `HSE Sans` | 12px | 400 | 16px |
+| `.hse-Text_caption_x_small_bold` | Подпись XS жирная | `HSE Sans` | 12px | 600 | 16px |
+| `.hse-Text_label_x_small_regular` | Пометка XS | `HSE Sans` | 12px | 400 | 12px |
+| `.hse-Text_label_x_small_bold` | Пометка XS жирная | `HSE Sans` | 12px | 600 | 12px |
 
 ---
 
@@ -69,7 +70,6 @@
 | :--- | :--- | :--- | :--- |
 | `color_base_black` | `--hse-color-base-black` | `#0F0F14` | Основной высококонтрастный цвет текста |
 | `color_base_white` | `--hse-color-base-white` | `#FFFFFF` | Белый |
-| `color_background_brand`| `--hse-color-background-brand` | `#0060CF` | Фирменный фон |
 | `color_background_gray_1`| `--hse-color-background-gray-1`| `#EDEFF3` | Фоновый серый 1 |
 | `color_background_gray_2`| `--hse-color-background-gray-2`| `#F8F9FB` | Фоновый серый 2 (карточки, секции) |
 

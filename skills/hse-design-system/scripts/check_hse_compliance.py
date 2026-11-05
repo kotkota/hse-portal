@@ -81,14 +81,12 @@ HSE_ALLOWED_FONTS = {
 # =============================================================================
 
 HEX_COLOR_RE = re.compile(r'#([0-9a-fA-F]{3,8})\b')
+CSS_DECL_RE = re.compile(r':\s*([^;{}]+?)\s*(?:;|(?=\}))')
 INLINE_FONT_RE = re.compile(r'font-family\s*:\s*([^;}]+)', re.IGNORECASE)
 # CSS-переменные: var(--hse-...) — валидны, var(--anything-else) — подозрительны
 CSS_VAR_RE = re.compile(r'var\(\s*(--[\w-]+)\s*\)', re.IGNORECASE)
 # Кавычки проверяем только в тексте, без HTML-тегов/атрибутов
-RUSSIAN_DOUBLE_QUOTE_RE = re.compile(r'"[^"<>]{1,120}"')
-HTML_TAG_RE = re.compile(r'<[^>]+>')
-IMG_TAG_RE = re.compile(r'<img\b[^>]*>', re.IGNORECASE)
-ALT_ATTR_RE = re.compile(r'\balt\s*=', re.IGNORECASE)
+RUSSIAN_DOUBLE_QUOTE_RE = re.compile(r'"[^"]{1,120}"')
 
 
 def normalize_hex(color: str) -> str:
@@ -113,13 +111,17 @@ def extract_font_names(font_family_value: str) -> list[str]:
 
 
 def css_color_check(css_text: str) -> list[str]:
-    """Возвращает список запрещённых цветов, найденных в CSS-коде."""
+    """Возвращает список запрещённых цветов, найденных в CSS-коде (только в значениях свойств)."""
     forbidden = []
-    for match in HEX_COLOR_RE.finditer(css_text):
-        raw = "#" + match.group(1)
-        normalized = normalize_hex(raw)
-        if normalized not in HSE_ALLOWED_COLORS:
-            forbidden.append(raw)
+    text = css_text + ";"
+    for decl in CSS_DECL_RE.finditer(text):
+        val = decl.group(1)
+        val = re.sub(r'url\([^)]+\)', '', val)
+        for match in HEX_COLOR_RE.finditer(val):
+            raw = "#" + match.group(1)
+            normalized = normalize_hex(raw)
+            if normalized not in HSE_ALLOWED_COLORS:
+                forbidden.append(raw)
     return forbidden
 
 
@@ -165,9 +167,11 @@ class HSEHtmlParser(HTMLParser):
         self.linked_css: list[str] = []
         self.inline_styles: list[tuple[int, str]] = []  # (lineno, style)
         self.style_blocks: list[tuple[int, str]] = []   # (lineno, css)
-        self.img_tags: list[tuple[int, str]] = []        # (lineno, raw_tag)
+        self.img_tags_without_alt: list[tuple[int, str]] = []
+        self.quote_issues: list[tuple[int, str]] = []
         self._current_tag = None
         self._in_style = False
+        self._in_script = False
         self._style_start_line = 0
         self._style_buf = []
 
@@ -186,24 +190,38 @@ class HSEHtmlParser(HTMLParser):
             self._style_start_line = lineno
             self._style_buf = []
 
+        if tag == "script":
+            self._in_script = True
+
         if "style" in attr_dict:
             self.inline_styles.append((lineno, attr_dict["style"]))
 
         if tag == "img":
-            # reconstruct minimal tag string for reporting
             attrs_str = " ".join(
                 f'{k}="{v}"' if v is not None else k for k, v in attrs
             )
-            self.img_tags.append((lineno, f"<img {attrs_str}>"))
+            if "alt" not in attr_dict:
+                self.img_tags_without_alt.append((lineno, f"<img {attrs_str}>"))
 
     def handle_endtag(self, tag):
         if tag == "style" and self._in_style:
             self._in_style = False
             self.style_blocks.append((self._style_start_line, "".join(self._style_buf)))
+        if tag == "script":
+            self._in_script = False
 
     def handle_data(self, data):
         if self._in_style:
             self._style_buf.append(data)
+            return
+        if self._in_script:
+            return
+
+        lineno, _ = self.getpos()
+        for offset, line in enumerate(data.splitlines()):
+            line_str = line.strip()
+            if line_str and RUSSIAN_DOUBLE_QUOTE_RE.search(line_str):
+                self.quote_issues.append((lineno + offset, line_str[:100]))
 
 
 # =============================================================================
@@ -242,26 +260,22 @@ def lint_file(html_path: Path) -> list[dict]:
     # -------------------------------------------------------------------------
     # [ALT] Проверка атрибута alt у всех <img>
     # -------------------------------------------------------------------------
-    for lineno, tag_str in parser.img_tags:
-        if not ALT_ATTR_RE.search(tag_str):
-            issues.append({
-                "rule": "ALT",
-                "line": lineno,
-                "detail": f"Тег <img> без атрибута alt: {tag_str[:80]}",
-            })
+    for lineno, tag_str in parser.img_tags_without_alt:
+        issues.append({
+            "rule": "ALT",
+            "line": lineno,
+            "detail": f"Тег <img> без атрибута alt: {tag_str[:80]}",
+        })
 
     # -------------------------------------------------------------------------
     # [QUOTES] Проверка прямых кавычек в тексте (не в HTML-атрибутах и тегах)
     # -------------------------------------------------------------------------
-    for lineno_0, line_text in enumerate(source.splitlines(), start=1):
-        # Убираем HTML-теги из строки, чтобы не срабатывать на атрибуты
-        text_only = HTML_TAG_RE.sub("", line_text)
-        if RUSSIAN_DOUBLE_QUOTE_RE.search(text_only):
-            issues.append({
-                "rule": "QUOTES",
-                "line": lineno_0,
-                "detail": f'Прямые кавычки "..." вместо «ёлочек». Строка: {text_only.strip()[:100]}',
-            })
+    for lineno, snippet in parser.quote_issues:
+        issues.append({
+            "rule": "QUOTES",
+            "line": lineno,
+            "detail": f'Прямые кавычки "..." вместо «ёлочек». Строка: {snippet}',
+        })
 
     # -------------------------------------------------------------------------
     # [COLORS] и [FONTS] в inline-стилях

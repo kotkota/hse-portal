@@ -63,7 +63,7 @@
 }
 /* HSE Sans - Italic (400 italic) */
 @font-face {
-  font-family: HSE Sans;
+  font-family: 'HSE Sans';
   src: url(/f/src/global/fonts/HSESans-Italic.woff2) format("woff2"),
        url(/f/src/global/fonts/HSESans-Italic.woff) format("woff");
   font-weight: 400;
