@@ -1,6 +1,7 @@
+
 #!/usr/bin/env python3
 """
-HSE Design System Compliance Linter v1.0
+HSE Design System Compliance Linter v1.1
 Проверяет HTML-файлы на соответствие дизайн-системе НИУ ВШЭ.
 
 Использование:
@@ -8,10 +9,11 @@ HSE Design System Compliance Linter v1.0
     python3 check_hse_compliance.py <путь_к_файлу.html> --json
 
 Проверки:
-    [COLORS]  Запрещённые HEX-цвета (не из палитры ВШЭ)
-    [QUOTES]  Прямые кавычки "..." вместо «ёлочек»
-    [ALT]     Отсутствие атрибута alt у тегов <img>
     [CSS]     Отсутствие подключения hse-tokens.css / fonts.css
+    [ALT]     Отсутствие атрибута alt у тегов <img>
+    [QUOTES]  Прямые кавычки "..." вместо «ёлочек»
+    [DASHES]  Дефис вместо тире (« - » вместо « — », «2025-2026» вместо «2025–2026»)
+    [COLORS]  Запрещённые HEX-цвета (не из палитры ВШЭ)
     [FONTS]   Посторонние (не фирменные) шрифты
 """
 
@@ -68,7 +70,7 @@ HSE_ALLOWED_FONTS = {
     # Фирменные
     "hse sans", "hse slab",
     # Системные фолбэки из hse-tokens.css
-    "system-ui", "-apple-system", "segoe ui", "roboto",
+    "system-ui", "-apple-system", "blinkmacsystemfont", "segoe ui", "roboto",
     "georgia", "times new roman",
     "ui-monospace", "sfmono-regular", "menlo", "monaco", "consolas",
     # Общие ключевые слова CSS
@@ -77,31 +79,44 @@ HSE_ALLOWED_FONTS = {
 }
 
 # =============================================================================
-# 3. Вспомогательные функции
+# 3. Вспомогательные функции и регулярные выражения
 # =============================================================================
 
+CODE_TAGS = {"code", "pre", "kbd", "samp"}
+
 HEX_COLOR_RE = re.compile(r'#([0-9a-fA-F]{3,8})\b')
-CSS_DECL_RE = re.compile(r':\s*([^;{}]+?)\s*(?:;|(?=\}))')
-INLINE_FONT_RE = re.compile(r'font-family\s*:\s*([^;}]+)', re.IGNORECASE)
-# CSS-переменные: var(--hse-...) — валидны, var(--anything-else) — подозрительны
-CSS_VAR_RE = re.compile(r'var\(\s*(--[\w-]+)\s*\)', re.IGNORECASE)
-# Кавычки проверяем только в тексте, без HTML-тегов/атрибутов
-RUSSIAN_DOUBLE_QUOTE_RE = re.compile(r'"[^"]{1,120}"')
+PROPERTY_DECL_RE = re.compile(r'([\w-]+)\s*:\s*([^;{}]+?)\s*(?:;|(?=\}))')
+VAR_RE = re.compile(r'var\(\s*(--[\w-]+)(?:\s*,\s*([^()]+?))?\s*\)', re.IGNORECASE)
+
+# Типографические правила
+DASH_AS_HYPHEN_RE = re.compile(r'(?<=\S)\s+-\s+(?=\S)')
+YEAR_RANGE_HYPHEN_RE = re.compile(r'\b(19\d\d|20\d\d)-(19\d\d|20\d\d)\b')
 
 
-def normalize_hex(color: str) -> str:
-    """Приводит 3-символьный hex к 6-символьному и переводит в нижний регистр."""
-    color = color.lower()
-    if len(color) == 4:  # #abc → #aabbcc
-        color = "#" + "".join(c * 2 for c in color[1:])
-    return color
+def strip_css_comments(css_text: str) -> str:
+    """Заменяет тело комментариев пробелами, сохраняя количество строк и смещения."""
+    def replacer(match):
+        return re.sub(r'[^\n]', ' ', match.group(0))
+    return re.sub(r'/\*.*?\*/', replacer, css_text, flags=re.DOTALL)
+
+
+def normalize_hex(raw_hex: str) -> str:
+    """
+    Приводит hex-код к стандартному 6-значному виду в нижнем регистре.
+    Для 4- и 8-значных hex отсекает альфа-канал к базовому цвету.
+    """
+    h = raw_hex.lower()
+    if len(h) == 4:  # #abc -> #aabbcc
+        return "#" + "".join(c * 2 for c in h[1:])
+    if len(h) == 5:  # #rgba -> #aabbcc (базовый цвет)
+        return "#" + "".join(c * 2 for c in h[1:4])
+    if len(h) == 9:  # #rrggbbaa -> #rrggbb (базовый цвет)
+        return h[:7]
+    return h
 
 
 def extract_font_names(font_family_value: str) -> list[str]:
-    """
-    Разбирает значение font-family на отдельные имена шрифтов.
-    'HSE Sans', Georgia, sans-serif  →  ['hse sans', 'georgia', 'sans-serif']
-    """
+    """Разбирает значение font-family на отдельные имена шрифтов."""
     names = []
     for part in font_family_value.split(","):
         name = part.strip().strip("'\"").lower()
@@ -110,50 +125,109 @@ def extract_font_names(font_family_value: str) -> list[str]:
     return names
 
 
-def css_color_check(css_text: str) -> list[str]:
-    """Возвращает список запрещённых цветов, найденных в CSS-коде (только в значениях свойств)."""
-    forbidden = []
-    text = css_text + ";"
-    for decl in CSS_DECL_RE.finditer(text):
-        val = decl.group(1)
-        val = re.sub(r'url\([^)]+\)', '', val)
-        for match in HEX_COLOR_RE.finditer(val):
-            raw = "#" + match.group(1)
+def check_font_value(value: str) -> list[str]:
+    """
+    Проверяет значение свойства font-family (или family-части свойства font).
+    Поддерживает CSS-переменные с фолбэками: var(--hse-..., fallback).
+    """
+    foreign = []
+    # 1. Проверяем имена переменных (должны быть --hse-*)
+    for m in VAR_RE.finditer(value):
+        var_name = m.group(1).lower()
+        if not var_name.startswith("--hse-"):
+            foreign.append(f"var({var_name})")
+
+    # 2. Заменяем var(...) на указанный фолбэк (или пробел), чтобы проверить и фолбэк
+    def repl_var(m):
+        fallback = m.group(2)
+        return fallback if fallback else " "
+
+    literal_value = VAR_RE.sub(repl_var, value).strip().strip(",")
+    for font_name in extract_font_names(literal_value):
+        if font_name and font_name not in HSE_ALLOWED_FONTS:
+            foreign.append(font_name)
+
+    return foreign
+
+
+def extract_family_from_font_shorthand(val: str) -> str:
+    """Извлекает часть шрифтового семейства из составного свойства font: ..."""
+    clean = re.sub(
+        r'^(?:(?:italic|oblique|small-caps|bold|bolder|lighter|\d{3}|normal)\s+)*'
+        r'\d+(?:\.\d+)?(?:px|pt|em|rem|%)'
+        r'(?:/\d+(?:\.\d+)?(?:px|pt|em|rem|%|[\d.]+))?\s+',
+        '',
+        val.strip(),
+        flags=re.IGNORECASE
+    )
+    return clean.strip()
+
+
+def check_css_declarations(css_text: str, base_line: int = 1, context: str = "блоке <style>") -> list[dict]:
+    """
+    Анализирует CSS-код на запрещённые цвета и посторонние шрифты.
+    Возвращает список словарей: {"rule": ..., "line": ..., "detail": ...}
+    с точными номерами строк каждого нарушения.
+    """
+    issues = []
+    cleaned = strip_css_comments(css_text)
+    text_to_scan = cleaned + ";"
+
+    for decl_match in PROPERTY_DECL_RE.finditer(text_to_scan):
+        prop = decl_match.group(1).lower()
+        val = decl_match.group(2).strip()
+
+        offset = decl_match.start()
+        line_offset = cleaned[:offset].count('\n')
+        curr_line = base_line + line_offset
+        line_str = curr_line if not context.startswith("файле ") else f"{context.split(' ', 1)[1]}:{curr_line}"
+
+        # 1. Проверка HEX-цветов
+        val_no_urls = re.sub(r'url\([^)]+\)', '', val)
+        for hex_match in HEX_COLOR_RE.finditer(val_no_urls):
+            raw = "#" + hex_match.group(1)
             normalized = normalize_hex(raw)
             if normalized not in HSE_ALLOWED_COLORS:
-                forbidden.append(raw)
-    return forbidden
+                issues.append({
+                    "rule": "COLORS",
+                    "line": line_str,
+                    "detail": f"Запрещённый цвет {raw} в {context}.",
+                })
+
+        # 2. Проверка шрифтов
+        bad_fonts = []
+        if prop == "font-family":
+            bad_fonts = check_font_value(val)
+        elif prop == "font":
+            family_part = extract_family_from_font_shorthand(val)
+            if family_part:
+                bad_fonts = check_font_value(family_part)
+
+        for bad_font in bad_fonts:
+            issues.append({
+                "rule": "FONTS",
+                "line": line_str,
+                "detail": f"Посторонний шрифт «{bad_font}» в {context}.",
+            })
+
+    return issues
+
+
+# Функции обратной совместимости для внешних вызовов
+def css_color_check(css_text: str) -> list[str]:
+    issues = check_css_declarations(css_text)
+    return [re.search(r'#[0-9a-fA-F]{3,8}\b', iss["detail"]).group(0) for iss in issues if iss["rule"] == "COLORS"]
 
 
 def css_font_check(css_text: str) -> list[str]:
-    """
-    Возвращает список посторонних шрифтов/токенов, найденных в CSS-коде.
-
-    Логика для CSS-переменных:
-      var(--hse-font-family-*)  → валидно, пропускаем
-      var(--anything-else)      → нарушение: сторонний токен
-    Для литеральных имён:
-      имена из HSE_ALLOWED_FONTS → валидно
-      всё остальное              → нарушение
-    """
-    foreign = []
-    for match in INLINE_FONT_RE.finditer(css_text):
-        value = match.group(1)
-
-        # Проверяем CSS-переменные, встреченные в значении
-        for var_match in CSS_VAR_RE.finditer(value):
-            prop = var_match.group(1).lower()          # --hse-font-family-sans
-            if not prop.startswith("--hse-"):
-                foreign.append(f"var({prop})")
-            # --hse-* всегда валидны — пропускаем
-
-        # Убираем все var(...) из значения и проверяем оставшиеся литеральные имена
-        literal_value = CSS_VAR_RE.sub("", value).strip().strip(",")
-        for font_name in extract_font_names(literal_value):
-            if font_name and font_name not in HSE_ALLOWED_FONTS:
-                foreign.append(font_name)
-
-    return foreign
+    issues = check_css_declarations(css_text)
+    fonts = []
+    for iss in issues:
+        if iss["rule"] == "FONTS":
+            m = re.search(r'«(.+?)»', iss["detail"])
+            if m:
+                fonts.append(m.group(1))
+    return fonts
 
 
 # =============================================================================
@@ -163,15 +237,15 @@ def css_font_check(css_text: str) -> list[str]:
 class HSEHtmlParser(HTMLParser):
     def __init__(self):
         super().__init__()
-        self.errors: list[dict] = []
         self.linked_css: list[str] = []
         self.inline_styles: list[tuple[int, str]] = []  # (lineno, style)
         self.style_blocks: list[tuple[int, str]] = []   # (lineno, css)
         self.img_tags_without_alt: list[tuple[int, str]] = []
         self.quote_issues: list[tuple[int, str]] = []
-        self._current_tag = None
+        self.dash_issues: list[tuple[int, str]] = []
         self._in_style = False
         self._in_script = False
+        self._code_depth = 0
         self._style_start_line = 0
         self._style_buf = []
 
@@ -179,10 +253,14 @@ class HSEHtmlParser(HTMLParser):
         attr_dict = dict(attrs)
         lineno, _ = self.getpos()
 
+        if tag in CODE_TAGS:
+            self._code_depth += 1
+
         if tag == "link":
             href = attr_dict.get("href", "")
             rel = attr_dict.get("rel", "")
-            if "stylesheet" in rel or href.endswith(".css"):
+            clean_href = href.split("?")[0].split("#")[0]
+            if "stylesheet" in rel or clean_href.endswith(".css"):
                 self.linked_css.append(href)
 
         if tag == "style":
@@ -204,6 +282,8 @@ class HSEHtmlParser(HTMLParser):
                 self.img_tags_without_alt.append((lineno, f"<img {attrs_str}>"))
 
     def handle_endtag(self, tag):
+        if tag in CODE_TAGS and self._code_depth > 0:
+            self._code_depth -= 1
         if tag == "style" and self._in_style:
             self._in_style = False
             self.style_blocks.append((self._style_start_line, "".join(self._style_buf)))
@@ -211,17 +291,34 @@ class HSEHtmlParser(HTMLParser):
             self._in_script = False
 
     def handle_data(self, data):
-        if self._in_style:
-            self._style_buf.append(data)
-            return
-        if self._in_script:
+        if self._in_style or self._in_script or self._code_depth > 0:
+            if self._in_style:
+                self._style_buf.append(data)
             return
 
         lineno, _ = self.getpos()
         for offset, line in enumerate(data.splitlines()):
             line_str = line.strip()
-            if line_str and RUSSIAN_DOUBLE_QUOTE_RE.search(line_str):
-                self.quote_issues.append((lineno + offset, line_str[:100]))
+            if not line_str:
+                continue
+
+            current_line = lineno + offset
+
+            # 1. Проверка прямых кавычек "..."
+            if '"' in line_str:
+                self.quote_issues.append((current_line, line_str[:100]))
+
+            # 2. Проверка дефиса вместо тире
+            if DASH_AS_HYPHEN_RE.search(line_str):
+                self.dash_issues.append((
+                    current_line,
+                    f'Дефис с пробелами « - » вместо длинного тире « — ». Строка: {line_str[:100]}'
+                ))
+            elif YEAR_RANGE_HYPHEN_RE.search(line_str):
+                self.dash_issues.append((
+                    current_line,
+                    f'Дефис в числовом диапазоне вместо короткого тире «–». Строка: {line_str[:100]}'
+                ))
 
 
 # =============================================================================
@@ -268,7 +365,7 @@ def lint_file(html_path: Path) -> list[dict]:
         })
 
     # -------------------------------------------------------------------------
-    # [QUOTES] Проверка прямых кавычек в тексте (не в HTML-атрибутах и тегах)
+    # [QUOTES] Проверка прямых кавычек в тексте
     # -------------------------------------------------------------------------
     for lineno, snippet in parser.quote_issues:
         issues.append({
@@ -278,86 +375,45 @@ def lint_file(html_path: Path) -> list[dict]:
         })
 
     # -------------------------------------------------------------------------
+    # [DASHES] Проверка дефисов вместо тире
+    # -------------------------------------------------------------------------
+    for lineno, detail in parser.dash_issues:
+        issues.append({
+            "rule": "DASHES",
+            "line": lineno,
+            "detail": detail,
+        })
+
+    # -------------------------------------------------------------------------
     # [COLORS] и [FONTS] в inline-стилях
     # -------------------------------------------------------------------------
     for lineno, style_val in parser.inline_styles:
-        for bad_color in css_color_check(style_val):
-            issues.append({
-                "rule": "COLORS",
-                "line": lineno,
-                "detail": f"Запрещённый цвет {bad_color} в inline-стиле.",
-            })
-        for bad_font in css_font_check(style_val):
-            issues.append({
-                "rule": "FONTS",
-                "line": lineno,
-                "detail": f"Посторонний шрифт «{bad_font}» в inline-стиле.",
-            })
+        css_issues = check_css_declarations(style_val, base_line=lineno, context="inline-стиле")
+        for iss in css_issues:
+            issues.append(iss)
 
     # -------------------------------------------------------------------------
     # [COLORS] и [FONTS] в блоках <style>
     # -------------------------------------------------------------------------
     for block_line, css_text in parser.style_blocks:
-        # Для точного номера строки внутри блока считаем смещение
-        for bad_color in css_color_check(css_text):
-            # Найдём приблизительную строку внутри блока
-            inner_line = 0
-            for i, l in enumerate(css_text.splitlines()):
-                if bad_color.lower() in l.lower() or bad_color.upper() in l:
-                    inner_line = i
-                    break
-            issues.append({
-                "rule": "COLORS",
-                "line": block_line + inner_line,
-                "detail": f"Запрещённый цвет {bad_color} в блоке <style>.",
-            })
-        for bad_font in css_font_check(css_text):
-            inner_line = 0
-            for i, l in enumerate(css_text.splitlines()):
-                if bad_font.lower() in l.lower():
-                    inner_line = i
-                    break
-            issues.append({
-                "rule": "FONTS",
-                "line": block_line + inner_line,
-                "detail": f"Посторонний шрифт «{bad_font}» в блоке <style>.",
-            })
+        css_issues = check_css_declarations(css_text, base_line=block_line, context="блоке <style>")
+        for iss in css_issues:
+            issues.append(iss)
 
     # -------------------------------------------------------------------------
     # [COLORS] и [FONTS] в отдельных подключённых CSS-файлах (рядом с HTML)
     # -------------------------------------------------------------------------
     for css_href in parser.linked_css:
-        # Пропускаем внешние URL и серверные пути (/f/...)
         if css_href.startswith(("http://", "https://", "//", "/f/")):
             continue
-        css_path = html_path.parent / css_href
+        clean_href = css_href.split("?")[0].split("#")[0]
+        css_path = html_path.parent / clean_href
         if not css_path.exists():
             continue
         css_source = css_path.read_text(encoding="utf-8", errors="replace")
-        css_lines = css_source.splitlines()
-
-        for bad_color in css_color_check(css_source):
-            lineno = next(
-                (i + 1 for i, l in enumerate(css_lines)
-                 if bad_color.lower() in l.lower()),
-                1,
-            )
-            issues.append({
-                "rule": "COLORS",
-                "line": f"{css_path.name}:{lineno}",
-                "detail": f"Запрещённый цвет {bad_color} в файле {css_path.name}.",
-            })
-        for bad_font in css_font_check(css_source):
-            lineno = next(
-                (i + 1 for i, l in enumerate(css_lines)
-                 if bad_font.lower() in l.lower()),
-                1,
-            )
-            issues.append({
-                "rule": "FONTS",
-                "line": f"{css_path.name}:{lineno}",
-                "detail": f"Посторонний шрифт «{bad_font}» в файле {css_path.name}.",
-            })
+        css_issues = check_css_declarations(css_source, base_line=1, context=f"файле {css_path.name}")
+        for iss in css_issues:
+            issues.append(iss)
 
     return issues
 
@@ -370,11 +426,22 @@ RULE_ICONS = {
     "CSS":    "🔗",
     "ALT":    "🖼 ",
     "QUOTES": "❝ ",
+    "DASHES": "➖",
     "COLORS": "🎨",
     "FONTS":  "🔤",
 }
 
-RULE_ORDER = ["CSS", "ALT", "QUOTES", "COLORS", "FONTS"]
+RULE_ORDER = ["CSS", "ALT", "QUOTES", "DASHES", "COLORS", "FONTS"]
+
+
+def plural_ru(n: int, one: str, few: str, many: str) -> str:
+    """Склонение существительных с числительными в русском языке."""
+    n_abs = abs(n)
+    if n_abs % 10 == 1 and n_abs % 100 != 11:
+        return one
+    if 2 <= n_abs % 10 <= 4 and not (12 <= n_abs % 100 <= 14):
+        return few
+    return many
 
 
 def print_report(html_path: Path, issues: list[dict], use_json: bool):
@@ -402,12 +469,15 @@ def print_report(html_path: Path, issues: list[dict], use_json: bool):
             continue
         icon = RULE_ICONS.get(rule, "⚠️ ")
         rule_issues = by_rule[rule]
-        print(f"\n  {icon} [{rule}]  {len(rule_issues)} нарушени{'е' if len(rule_issues)==1 else 'я' if len(rule_issues) in (2,3,4) else 'й'}")
+        count = len(rule_issues)
+        word = f"нарушени{plural_ru(count, 'е', 'я', 'й')}"
+        print(f"\n  {icon} [{rule}]  {count} {word}")
         for iss in rule_issues:
             print(f"      Строка {iss['line']}: {iss['detail']}")
 
+    total_word = f"нарушени{plural_ru(total, 'е', 'я', 'й')}"
     print(f"\n{'='*60}")
-    print(f"  Итого: {total} нарушени{'е' if total==1 else 'я' if total in (2,3,4) else 'й'}")
+    print(f"  Итого: {total} {total_word}")
     print(f"{'='*60}\n")
 
 
