@@ -28,10 +28,7 @@
 
 ## 2. Фирменные шрифты (HSE Sans и HSE Slab)
 
-Официальные файлы шрифтов размещены локально в [`assets/fonts/`](../assets/fonts/):
-- **HSE Sans**: `HSESans-Regular.otf`, `HSESans-SemiBold.otf`, `HSESans-Bold.otf`, `HSESans-Italic.otf`, `HSESans-Black.otf`, `HSESans-Thin.otf`.
-- **HSE Slab**: `HSESlab-Regular.otf`, `HSESlab-Italic.otf`, `HSESlab-Black.otf`.
-- Подключение: [`assets/styles/fonts.css`](../assets/styles/fonts.css).
+Скилл настроен на использование шрифтов с серверов **hse.ru** (`/f/src/global/fonts/`). Если ваши страницы размещены **не** на сервере с этими путями, отредактируйте `assets/styles/fonts.css` и укажите полный URL к CDN, локальные пути или системные фолбэки.
 
 ---
 

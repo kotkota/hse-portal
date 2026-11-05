@@ -9,7 +9,7 @@
 1. **Размер основного текста**:
    - Оптимальный размер наборного текста — **18px** (`.hse-Text_paragraph_large`, интерлиньяж 24px).
    - Размер 16px (`.hse-Text_paragraph_small`) допустим только в плотных интерфейсах и сжатых таблицах.
-   - 
+    
 2. **Длина строки (Line Length)**:
    - Для оптимальной читабельности и снижения усталости глаз выбирайте длину строки **от 40 до 80 символов** (включая пробелы). В CSS рекомендуется задавать контентным блокам `max-width: 65ch` – `75ch`.
 3. **Контраст заголовков и текста**:
@@ -88,4 +88,4 @@
 - `overflow-wrap: break-word` where a long word, link or ID could escape the container.
 - `white-space: nowrap` on labels and badges where a line break looks broken.
 
-Keep interface text at `text-align: start`. `justify` belongs only in specific editorial layouts
+Keep interface text at `text-align: start`. `justify` belongs only in specific editorial layouts.

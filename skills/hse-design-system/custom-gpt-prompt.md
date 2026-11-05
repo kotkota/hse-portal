@@ -14,7 +14,7 @@
   * Темно-синий (Brand Dark): #002D6E (var(--hse-color-brand-dark))
   * Сумеречный синий (Brand Twilight): #0044B0 (var(--hse-color-brand-twilight))
   * Основной текст: #0F0F14 (var(--hse-color-base-black))
-  * Фоны: #FFFFFF, #F8F9FB (var(--hse-color-bg-base)), #EDEFF3 (var(--hse-color-bg-alt))
+  * Фоны: #FFFFFF, #F8F9FB (var(--hse-color-background-gray-2)), #EDEFF3 (var(--hse-color-background-gray-1))
   * Акценты: Dodger #27A3FF, Red #F0522B, Orange #FA8500, Green #00B86E
 - ЗАПРЕЩЕНО: случайные оттенки синего (#0000FF, #1E90FF, #3B82F6) и несогласованные цвета.
 
